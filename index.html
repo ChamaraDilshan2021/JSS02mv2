@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Programming Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+     <link rel="icon" type="image/png" href="https://www.w3schools.com/js/img_javascript_480.jpg">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --success-border: #22c55e;
+            --error-bg: #fee2e2;
+            --error-text: #991b1b;
+            --error-border: #ef4444;
+            --border-radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            width: 100%;
+            max-width: 650px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .hidden { display: none !important; }
+        
+        h1, h2 { 
+            margin-top: 0; 
+            font-weight: 700; 
+            color: var(--text-main);
+            letter-spacing: -0.025em;
+        }
+
+        h3 {
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        p { color: var(--text-muted); }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s ease;
+            background-color: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+            width: 100%;
+        }
+
+        button:hover:not(:disabled) { 
+            background-color: var(--primary-hover); 
+            transform: translateY(-1px);
+        }
+
+        .chapter-btn {
+            display: block;
+            text-align: left;
+            background-color: #f3f4f6;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            box-shadow: none;
+            border: 1px solid transparent;
+        }
+
+        .chapter-btn:hover:not(:disabled) {
+            background-color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .option-btn {
+            display: block;
+            text-align: left;
+            background-color: white;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            border: 2px solid #e5e7eb;
+            font-weight: 500;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .btn-correct {
+            background-color: var(--success-bg) !important;
+            border-color: var(--success-border) !important;
+            color: var(--success-text) !important;
+        }
+
+        .btn-wrong {
+            background-color: var(--error-bg) !important;
+            border-color: var(--error-border) !important;
+            color: var(--error-text) !important;
+        }
+
+        .disabled-btn {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e5e7eb;
+            border-radius: 999px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .ai-box {
+            background: #4b5563;
+            padding: 16px;
+            border-left: 4px solid var(--primary);
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95em;
+            color: #E5E7EF;
+            line-height: 1.5;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        .btn-secondary { background-color: #4b5563; box-shadow: none; width: auto; }
+        .btn-secondary:hover:not(:disabled) { background-color: #374151; }
+        
+        .score-display {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        /* --- Toggle Switch CSS --- */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div id="setup-section" style="text-align: center;">
+        <h1>Web Programming</h1>
+        <p style="margin-bottom: 30px;">Enter your name to begin the assessment.</p>
+        
+        <div class="input-group">
+            <label>Student Name</label>
+            <input type="text" id="student-name" placeholder="e.g. Brendan Eich">
+        </div>
+
+        <button onclick="startApp()">Access Modules</button>
+    </div>
+
+    <div id="chapters-section" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2>Module Selection</h2>
+        </div>
+        <p style="margin-top: 0;">Logged in as: <strong id="display-name" style="color: var(--primary);"></strong></p>
+
+        <div class="toggle-container">
+            <span class="toggle-label">Enable AI Tutor Features</span>
+            <label class="switch">
+                <input type="checkbox" id="ai-toggle" checked onchange="toggleAI()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div id="chapter-list" style="margin-top: 15px;">
+            </div>
+    </div>
+
+    <div id="quiz-section" class="hidden">
+        <div class="quiz-header">
+            <div>
+                <button onclick="backToChapters()" class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; margin-bottom: 12px;">&larr; Back to Modules</button>
+                <h2 id="quiz-title" style="margin: 0; font-size: 1.25rem;">Chapter Quiz</h2>
+            </div>
+            <span style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 4px;">
+                Question <span id="current-q-num">1</span> / <span id="total-q-num">X</span>
+            </span>
+        </div>
+        
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        
+        <h3 id="question-text"></h3>
+        <div id="options-container">
+            </div>
+        
+        <div id="ai-response" class="ai-box hidden"></div>
+
+        <div class="quiz-controls">
+            <button id="ai-hint-btn" onclick="getAIExplanation()" class="btn-secondary">Ask AI for a Hint</button>
+            <button id="next-btn" onclick="proceedToNext()" class="hidden" style="margin-left: auto;">Continue &rarr;</button>
+        </div>
+    </div>
+
+    <div id="results-section" class="hidden" style="text-align: center;">
+        <h2>Assessment Complete</h2>
+        
+        
+        <div class="score-display" id="final-score"></div>
+        <p style="font-weight: 500; font-size: 1.1rem; margin-bottom: 30px;">Score: <span id="raw-score"></span></p>
+        
+        <button onclick="backToChapters()" class="btn-secondary" style="width: 100%;">Return to Modules</button>
+    </div>
+
+</div>
+
+<script>
+    // ==========================================
+    // --- DEVELOPER CONFIGURATION ---
+    // ==========================================
+    
+    // Change this to 'gemini' or 'groq' to switch the active AI provider
+    const ACTIVE_AI_PROVIDER = 'groq'; 
+
+    const API_KEYS = {
+        gemini: "",
+        groq: "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" 
+    };
+
+    const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxBSRv7Xw1BJRsQfphG1kdYS7qltkRMvS4lSC0oTkOkGRxE-1x-pUDtLe8wQ3I2zd45Kg/exec"; 
+
+    // Add your chapter names here
+    const chapterNames = {
+        1: "Overview, Syntax, Placement, Variables",
+        2: "Data types, Interactions, Type Conversions, Operators",
+        3: "Loops, Switch, Functions",
+        4: "Objects, Arrays, Date & Time",
+        5: "Exception Handling"
+    };
+
+    // --- Quiz Data Structure ---
+    const quizData = {
+        1: [
+  { question: "What type of language is JavaScript?", options: ["A compiled, heavyweight language", "A dynamic, lightweight programming language", "A statically typed language", "A server-side only language"], answer: "A dynamic, lightweight programming language" },
+  { question: "JavaScript is usually embedded directly into:", options: ["CSS files", "HTML pages", "Server files", "Database files"], answer: "HTML pages" },
+  { question: "JavaScript is described as an interpreted language. What does this mean?", options: ["Scripts must be compiled before execution", "Scripts execute without preliminary compilation", "Scripts require a runtime engine download", "Scripts are converted to machine code first"], answer: "Scripts execute without preliminary compilation" },
+  { question: "Which of the following best describes JavaScript's relationship with Java?", options: ["JavaScript is a subset of Java", "JavaScript is built on Java", "JavaScript has no connectivity with the Java programming language", "JavaScript was derived from Java"], answer: "JavaScript has no connectivity with the Java programming language" },
+  { question: "JavaScript is a loosely typed programming language. What does this mean?", options: ["Variables must be declared with a specific type", "Variables are strictly bound to a single data type", "Variables are not bound to any specific data type", "Variables cannot change their type at runtime"], answer: "Variables are not bound to any specific data type" },
+  { question: "Which databases use JavaScript as their scripting and query language?", options: ["MySQL and PostgreSQL", "CouchDB and MongoDB", "Oracle and SQLite", "Redis and Cassandra"], answer: "CouchDB and MongoDB" },
+  { question: "Which JavaScript feature allows requesting content from a server and injecting it into the current document without reloading the entire page?", options: ["DOM manipulation", "Ajax", "Cookie storage", "Browser detection"], answer: "Ajax" },
+  { question: "What does 'Browser Detection' in JavaScript allow you to do?", options: ["Block users from specific browsers", "Detect the browser used by a visitor and optionally load a browser-specific page", "Speed up the browser's rendering engine", "Detect if the browser is outdated"], answer: "Detect the browser used by a visitor and optionally load a browser-specific page" },
+  { question: "What is the JavaScript feature called that stores information on a visitor's computer for retrieval on their next visit?", options: ["Sessions", "Local storage", "Cookies", "Cache"], answer: "Cookies" },
+  { question: "Client-side validation in JavaScript is used to:", options: ["Validate data on the server before storing it", "Validate inputs to fields before submitting a form", "Encrypt form data before sending", "Check database constraints"], answer: "Validate inputs to fields before submitting a form" },
+  { question: "Which of the following is an advantage of JavaScript related to server load?", options: ["It compresses data before sending", "It validates user input before sending the page to the server, reducing server load", "It caches all server responses", "It runs server-side scripts locally"], answer: "It validates user input before sending the page to the server, reducing server load" },
+  { question: "What does 'Immediate feedback to the visitors' mean as an advantage of JavaScript?", options: ["Visitors get real-time chat support", "Visitors don't have to wait for a page reload to see if they forgot to enter something", "Visitors receive email feedback instantly", "Visitors get browser push notifications"], answer: "Visitors don't have to wait for a page reload to see if they forgot to enter something" },
+  { question: "Which advantage of JavaScript refers to creating interfaces that react when the user hovers over them with a mouse or activates them via the keyboard?", options: ["Less server interaction", "Richer interfaces", "Increased interactivity", "Immediate feedback"], answer: "Increased interactivity" },
+  { question: "Which advantage of JavaScript allows including drag-and-drop components and sliders?", options: ["Less server interaction", "Immediate feedback", "Increased interactivity", "Richer interfaces"], answer: "Richer interfaces" },
+  { question: "Client-side JavaScript does NOT allow:", options: ["Modifying the DOM", "Reading or writing files (for security reasons)", "Displaying alert dialogs", "Validating form inputs"], answer: "Reading or writing files (for security reasons)" },
+  { question: "Which is a limitation of JavaScript regarding networking?", options: ["JavaScript can only connect to HTTP servers", "JavaScript cannot be used for networking applications because there is no such support", "JavaScript requires a proxy for networking", "JavaScript only supports WebSocket connections"], answer: "JavaScript cannot be used for networking applications because there is no such support" },
+  { question: "JavaScript does NOT have which of the following capabilities?", options: ["DOM manipulation", "Event handling", "Multithreading or multiprocessor capabilities", "String manipulation"], answer: "Multithreading or multiprocessor capabilities" },
+  { question: "JavaScript statements are placed within which HTML tags?", options: ["<js>...</js>", "<code>...</code>", "<script>...<\/script>", "<program>...</program>"], answer: "<script>...<\/script>" },
+  { question: "What does the <script> tag tell the browser?", options: ["To stop rendering the page", "To start interpreting all text between those tags as a script", "To link an external stylesheet", "To define a new HTML element"], answer: "To start interpreting all text between those tags as a script" },
+  { question: "Which attribute of the <script> tag specifies what scripting language is being used?", options: ["src", "type", "language", "charset"], answer: "language" },
+  { question: "What is the recommended value for the 'type' attribute in a <script> tag?", options: ["application/javascript", "text/ecmascript", "text/javascript", "application/ecmascript"], answer: "text/javascript" },
+  { question: "In modern HTML markup, are the 'type' and 'language' attributes required in the <script> tag?", options: ["Yes, both are required", "Only 'type' is required", "Only 'language' is required", "No, they are not required"], answer: "No, they are not required" },
+  { question: "Does JavaScript ignore spaces, tabs, and newlines in programs?", options: ["No, whitespace is significant", "Yes, JavaScript ignores spaces, tabs, and newlines", "Only tabs are ignored", "Only newlines are ignored"], answer: "Yes, JavaScript ignores spaces, tabs, and newlines" },
+  { question: "Are semicolons required at the end of every JavaScript statement?", options: ["Yes, always required", "No, they are optional if statements are on separate lines, but it is good practice to use them", "No, semicolons are never needed", "Yes, but only in strict mode"], answer: "No, they are optional if statements are on separate lines, but it is good practice to use them" },
+  { question: "JavaScript is a case-sensitive language. What does this mean?", options: ["Strings are automatically converted to uppercase", "Keywords, variables, and function names must be typed with consistent capitalization", "Only keywords are case-sensitive", "Variable names must be all lowercase"], answer: "Keywords, variables, and function names must be typed with consistent capitalization" },
+  { question: "In JavaScript, will 'Time' and 'TIME' be treated as the same identifier?", options: ["Yes, JavaScript is case-insensitive", "No, they convey different meanings in JavaScript", "Only in strict mode", "Only if declared with 'var'"], answer: "No, they convey different meanings in JavaScript" },
+  { question: "What is the purpose of comments in JavaScript?", options: ["To execute additional code", "To define variables", "To explain JavaScript or make code more readable", "To declare functions"], answer: "To explain JavaScript or make code more readable" },
+  { question: "How many types of comments exist in JavaScript?", options: ["One", "Two", "Three", "Four"], answer: "Two" },
+  { question: "Single-line comments in JavaScript are represented by:", options: ["/* */", "//", "#", "<! --  -- >"], answer: "//" },
+  { question: "Multi-line comments in JavaScript are represented by:", options: ["//", "##", "/* */", "<! --  -- >"], answer: "/* */" },
+  { question: "Can a single-line comment (//) be used before and after a statement?", options: ["Only before", "Only after", "Both before and after the statement", "Neither"], answer: "Both before and after the statement" },
+  { question: "In which three general areas can JavaScript be placed in a webpage?", options: ["Header, footer, sidebar", "Inside the head tag, within the body tag, in an external file", "Only in the head tag", "Only in an external file"], answer: "Inside the head tag, within the body tag, in an external file" },
+  { question: "Scripts that should execute when called or when an event is triggered should be placed in:", options: ["The body section", "An external file", "The head section", "A separate HTML file"], answer: "The head section" },
+  { question: "Placing a script in the head section ensures:", options: ["The script loads last", "The script is loaded before anyone uses it", "The script is hidden from the user", "The script executes only once"], answer: "The script is loaded before anyone uses it" },
+  { question: "Scripts to be executed when the page loads should be placed in:", options: ["The head section", "The body section", "An external file", "A CSS file"], answer: "The body section" },
+  { question: "What happens when you place a script in the body section?", options: ["It runs only when called", "It generates the content of the page", "It is ignored by the browser", "It only runs on page refresh"], answer: "It generates the content of the page" },
+  { question: "What file extension is used for external JavaScript files?", options: [".js", ".javascript", ".jscript", ".jsx"], answer: ".js" },
+  { question: "How do you include an external JavaScript file in HTML?", options: ["<js src='file.js'>", "<link rel='script' href='file.js'>", "<script src='file.js'><\/script>", "<include src='file.js'>"], answer: "<script src='file.js'><\/script>" },
+  { question: "Which of the following is an advantage of using external JavaScript?", options: ["It makes the HTML file larger", "It helps in the reusability of code in more than one HTML file", "It slows down page loading", "It prevents caching"], answer: "It helps in the reusability of code in more than one HTML file" },
+  { question: "Web browsers caching external JS files leads to:", options: ["Increased page loading time", "Reduced page loading time", "More HTTP requests", "Slower rendering"], answer: "Reduced page loading time" },
+  { question: "Which is a disadvantage of external JavaScript files?", options: ["They cannot be reused", "The stealer may download the coder's code using the URL of the JS file", "They slow down the browser", "They cannot be cached"], answer: "The stealer may download the coder's code using the URL of the JS file" },
+  { question: "If two JS files are dependent on one another, what is a potential risk?", options: ["One file may block the other from loading styles", "A failure in one file may affect the execution of the other dependent file", "They will automatically merge into one file", "They will conflict with CSS"], answer: "A failure in one file may affect the execution of the other dependent file" },
+  { question: "External scripts can be referenced with:", options: ["Only a relative path", "Only a full URL", "A full URL or a path relative to the current web page", "Only a local file path"], answer: "A full URL or a path relative to the current web page" },
+  { question: "What keyword is used to declare a variable in modern JavaScript?", options: ["var", "variable", "let", "def"], answer: "let" },
+  { question: "What is a variable in JavaScript described as?", options: ["A fixed value in memory", "A named storage for data", "A type of function", "A built-in object"], answer: "A named storage for data" },
+  { question: "Which of the following correctly declares and assigns a variable in one line?", options: ["variable message = 'Hello!';", "let message = 'Hello!';", "def message = 'Hello!';", "const message: 'Hello!';"], answer: "let message = 'Hello!';" },
+  { question: "Which operator is used to assign a value to a variable?", options: ["==", "===", "=>", "="], answer: "=" },
+  { question: "Can multiple variables be declared in one line in JavaScript?", options: ["No, each variable must be on its own line", "Yes, using comma separation", "Only with 'var'", "Only in strict mode"], answer: "Yes, using comma separation" },
+  { question: "What is the 'var' keyword in JavaScript?", options: ["The modern way to declare variables", "An old-school way to declare variables, almost the same as let", "Used only for constants", "Used only for arrays"], answer: "An old-school way to declare variables, almost the same as let" },
+  { question: "What happens if you try to declare the same variable twice using 'let'?", options: ["The second declaration overwrites the first silently", "It triggers a SyntaxError", "JavaScript ignores the second declaration", "The variable becomes undefined"], answer: "It triggers a SyntaxError" },
+  { question: "A variable should be declared:", options: ["Multiple times for clarity", "Once, then referred to without 'let'", "Every time it is used", "Only inside functions"], answer: "Once, then referred to without 'let'" },
+  { question: "Two limitations apply to variable names in JavaScript. Which of the following is one of them?", options: ["The name must be all uppercase", "The first character must not be a digit", "The name must be shorter than 10 characters", "The name cannot contain underscores"], answer: "The first character must not be a digit" },
+  { question: "Which characters are allowed in JavaScript variable names besides letters and digits?", options: ["@ and #", "$ and _", "! and &", "% and ^"], answer: "$ and _" },
+  { question: "What naming convention is commonly used when a variable name contains multiple words?", options: ["snake_case", "kebab-case", "PascalCase", "camelCase"], answer: "camelCase" },
+  { question: "Which of the following is an example of an INVALID variable name?", options: ["userName", "let$", "_value", "1abc"], answer: "1abc" },
+  { question: "Which of the following is a reserved word that cannot be used as a variable name?", options: ["message", "value", "let", "count"], answer: "let" },
+  { question: "What keyword is used to declare a constant variable in JavaScript?", options: ["let", "var", "final", "const"], answer: "const" },
+  { question: "What happens if you try to reassign a constant variable?", options: ["The constant is silently updated", "An error is thrown", "The constant becomes undefined", "Nothing happens"], answer: "An error is thrown" },
+  { question: "What is a common practice for naming constants that are known before execution (like color codes)?", options: ["Using camelCase with lowercase letters", "Using all lowercase letters", "Using capital letters and underscores", "Using single letter names"], answer: "Using capital letters and underscores" },
+  { question: "Which of the following is a benefit of using named uppercase constants like COLOR_ORANGE instead of '#FF7F00'?", options: ["It makes the code run faster", "It is easier to remember, harder to mistype, and more meaningful", "It reduces file size", "It prevents runtime errors"], answer: "It is easier to remember, harder to mistype, and more meaningful" }
+],
+        2: [
+  { question: "In JavaScript, a variable can hold a string at one moment and then a number. What kind of language is JavaScript described as because of this?", options: ["Statically typed", "Strongly typed", "Dynamically typed", "Loosely compiled"], answer: "Dynamically typed" },
+  { question: "How many data types does the latest ECMAScript standard define?", options: ["Six", "Seven", "Eight", "Ten"], answer: "Eight" },
+  { question: "How many of the ECMAScript data types are Primitive (predefined)?", options: ["Five", "Six", "Seven", "Eight"], answer: "Seven" },
+  { question: "Which of the following is the one Non-Primitive (Complex) data type in JavaScript?", options: ["Symbol", "BigInt", "Object", "Undefined"], answer: "Object" },
+  { question: "Which of the following lists contains ONLY primitive data types in JavaScript?", options: ["Number, String, Boolean, Null, Undefined, Symbol, BigInt", "Number, String, Boolean, Object, Array, Null", "Object, Array, Function, Symbol", "Number, String, Object, Null, Array"], answer: "Number, String, Boolean, Null, Undefined, Symbol, BigInt" },
+  { question: "The Number type in JavaScript represents:", options: ["Only integer values", "Only floating point values", "Both integer and floating point numbers", "Only positive numbers"], answer: "Both integer and floating point numbers" },
+  { question: "Which of the following are 'special numeric values' in JavaScript?", options: ["PI, E, and SQRT2", "Infinity, -Infinity, and NaN", "MAX_VALUE, MIN_VALUE, and EPSILON", "Zero, One, and Undefined"], answer: "Infinity, -Infinity, and NaN" },
+  { question: "What does Infinity represent in JavaScript?", options: ["The maximum integer value", "A value greater than any number (mathematical infinity)", "An error value", "The result of dividing by one"], answer: "A value greater than any number (mathematical infinity)" },
+  { question: "How can you get Infinity as a result in JavaScript?", options: ["By multiplying two large numbers", "By dividing 1 by 0", "By adding NaN to a number", "By using the Math.infinity() function"], answer: "By dividing 1 by 0" },
+  { question: "What does NaN represent in JavaScript?", options: ["A null value", "Not a Number — a computational error", "A negative number", "An empty variable"], answer: "Not a Number — a computational error" },
+  { question: "NaN is described as 'sticky'. What does this mean?", options: ["NaN converts to zero when used in calculations", "Any further mathematical operation on NaN returns NaN", "NaN converts to a string automatically", "NaN can only exist in comparison operations"], answer: "Any further mathematical operation on NaN returns NaN" },
+  { question: "What is the one exception to NaN being sticky?", options: ["NaN + 0 is 0", "NaN * 1 is 1", "NaN ** 0 is 1", "NaN - NaN is 0"], answer: "NaN ** 0 is 1" },
+  { question: "What is the safe integer range for the 'number' type in JavaScript?", options: ["±(2^32 - 1)", "±(2^53 - 1)", "±(2^64 - 1)", "±(2^16 - 1)"], answer: "±(2^53 - 1)" },
+  { question: "What is the BigInt type used for?", options: ["Representing floating-point numbers with high precision", "Representing integers of arbitrary length beyond the safe integer range", "Representing large strings", "Representing large boolean values"], answer: "Representing integers of arbitrary length beyond the safe integer range" },
+  { question: "How is a BigInt value created in JavaScript?", options: ["By prefixing the number with 'big'", "By wrapping the number in BigInt()", "By appending 'n' to the end of an integer", "By using the # symbol before the number"], answer: "By appending 'n' to the end of an integer" },
+  { question: "BigInt is particularly useful for which of the following use cases?", options: ["String manipulation", "Cryptography or microsecond-precision timestamps", "DOM manipulation", "Boolean logic"], answer: "Cryptography or microsecond-precision timestamps" },
+  { question: "How many types of quotes are available for strings in JavaScript?", options: ["One", "Two", "Three", "Four"], answer: "Three" },
+  { question: "Which of the following are the three types of quotes in JavaScript?", options: ["Single quotes, double quotes, backticks", "Single quotes, double quotes, curly braces", "Backticks, angle brackets, parentheses", "Double quotes, angle brackets, backticks"], answer: "Single quotes, double quotes, backticks" },
+  { question: "What makes backticks special compared to single and double quotes in JavaScript?", options: ["They support multi-byte characters only", "They allow embedding variables and expressions using ${...}", "They auto-escape special characters", "They are faster to process"], answer: "They allow embedding variables and expressions using ${...}" },
+  { question: "Can you embed an expression like 1 + 2 inside a backtick string using ${...}?", options: ["No, only variables can be embedded", "Yes, any expression can be embedded", "Only numbers can be embedded", "Only function calls can be embedded"], answer: "Yes, any expression can be embedded" },
+  { question: "Can variable embedding using ${...} be done inside single or double quotes?", options: ["Yes, it works in all quote types", "Yes, but only in double quotes", "No, this embedding functionality only works in backticks", "Yes, but only in single quotes"], answer: "No, this embedding functionality only works in backticks" },
+  { question: "The Boolean type has how many values?", options: ["Three", "Two", "Four", "One"], answer: "Two" },
+  { question: "What are the two values of the Boolean type?", options: ["0 and 1", "yes and no", "true and false", "on and off"], answer: "true and false" },
+  { question: "What is the result of the comparison: let isGreater = 4 > 1?", options: ["false", "undefined", "null", "true"], answer: "true" },
+  { question: "In JavaScript, null is:", options: ["The same as undefined", "A reference to a non-existing object (null pointer)", "A special value representing nothing, empty, or value unknown", "An error type"], answer: "A special value representing nothing, empty, or value unknown" },
+  { question: "Which statement best describes the null value in JavaScript?", options: ["null belongs to the Boolean type", "null forms a separate type of its own and contains only the null value", "null is the same as 0", "null is returned when a function has no return statement"], answer: "null forms a separate type of its own and contains only the null value" },
+  { question: "What does 'undefined' mean in JavaScript?", options: ["The variable has been deleted", "The value is null", "Value is not assigned to a variable", "The variable does not exist"], answer: "Value is not assigned to a variable" },
+  { question: "If a variable is declared but not assigned a value, what is its value?", options: ["null", "0", "false", "undefined"], answer: "undefined" },
+  { question: "What is the recommended use of null vs undefined in JavaScript?", options: ["Use null for numbers and undefined for strings", "Use null for 'empty' or 'unknown' values; undefined is reserved as the default initial value for unassigned things", "They are completely interchangeable", "Use undefined for objects and null for primitives"], answer: "Use null for 'empty' or 'unknown' values; undefined is reserved as the default initial value for unassigned things" },
+  { question: "The Object type is special because objects are used to:", options: ["Store a single primitive value", "Store collections of data and more complex entities", "Replace arrays in JavaScript", "Define data types"], answer: "Store collections of data and more complex entities" },
+  { question: "All types other than Object are called 'primitive' because:", options: ["They are faster to process", "Their values can contain only a single thing (a string, a number, etc.)", "They are defined before runtime", "They cannot be assigned to variables"], answer: "Their values can contain only a single thing (a string, a number, etc.)" },
+  { question: "What is the Symbol type used for in JavaScript?", options: ["Creating multi-line strings", "Performing bitwise operations", "Creating unique identifiers for objects", "Declaring global variables"], answer: "Creating unique identifiers for objects" },
+  { question: "Which three functions are used to interact with the user in JavaScript?", options: ["input, output, dialog", "alert, prompt, confirm", "show, ask, verify", "display, request, check"], answer: "alert, prompt, confirm" },
+  { question: "What does the alert() function do?", options: ["Asks the user a yes/no question", "Shows a message and waits for the user to press OK", "Gets input from the user", "Redirects to another page"], answer: "Shows a message and waits for the user to press OK" },
+  { question: "What is a 'modal window' in JavaScript interactions?", options: ["A window that appears behind the main page", "A window that the visitor cannot interact past until they deal with it", "A window that auto-closes after a timeout", "A scrollable popup window"], answer: "A window that the visitor cannot interact past until they deal with it" },
+  { question: "What does the prompt() function do?", options: ["Shows a message and terminates the program", "Shows a modal window with a text message, an input field, and OK/Cancel buttons", "Logs a message to the console", "Shows a yes/no question"], answer: "Shows a modal window with a text message, an input field, and OK/Cancel buttons" },
+  { question: "What are the two arguments accepted by the prompt() function?", options: ["name and value", "title and default", "message and type", "label and placeholder"], answer: "title and default" },
+  { question: "What is the 'default' parameter in prompt()?", options: ["The error message shown on cancellation", "An optional second parameter that provides the initial value for the input field", "The button label", "The title of the modal"], answer: "An optional second parameter that provides the initial value for the input field" },
+  { question: "What does the confirm() function display?", options: ["An input field for user text", "A modal window with a question and two buttons: OK and Cancel", "A dropdown menu for selection", "A loading indicator"], answer: "A modal window with a question and two buttons: OK and Cancel" },
+  { question: "What value does confirm() return when the user presses OK?", options: ["null", "undefined", "false", "true"], answer: "true" },
+  { question: "What value does confirm() return when the user presses Cancel?", options: ["null", "true", "false", "undefined"], answer: "false" },
+  { question: "Most of the time in JavaScript, operators and functions automatically convert values to:", options: ["Strings", "Numbers", "The right type", "Boolean"], answer: "The right type" },
+  { question: "What type does alert() automatically convert any value to in order to show it?", options: ["Number", "Boolean", "Object", "String"], answer: "String" },
+  { question: "String conversion happens when we:", options: ["Perform arithmetic operations", "Need the string form of a value", "Use comparison operators", "Call Array methods"], answer: "Need the string form of a value" },
+  { question: "What function can explicitly convert a value to a string?", options: ["toStr(value)", "String(value)", "toString(value)", "asString(value)"], answer: "String(value)" },
+  { question: "What does String conversion of 'false' produce?", options: ["0", "null", "false (the string)", "undefined"], answer: "false (the string)" },
+  { question: "Numeric conversion in mathematical functions and expressions happens:", options: ["Only when explicitly called", "Manually via the user", "Automatically", "Only in strict mode"], answer: "Automatically" },
+  { question: "What function can explicitly convert a value to a number?", options: ["toNumber(value)", "parseNum(value)", "int(value)", "Number(value)"], answer: "Number(value)" },
+  { question: "If a string cannot be read as a valid number during numeric conversion, the result is:", options: ["0", "null", "undefined", "NaN"], answer: "NaN" },
+  { question: "In numeric conversion, what does 'undefined' become?", options: ["0", "false", "null", "NaN"], answer: "NaN" },
+  { question: "In numeric conversion, what does 'null' become?", options: ["NaN", "undefined", "0", "false"], answer: "0" },
+  { question: "In numeric conversion, what do 'true' and 'false' become?", options: ["'true' becomes NaN, 'false' becomes 0", "'true' becomes 1, 'false' becomes 0", "'true' becomes 0, 'false' becomes 1", "Both become NaN"], answer: "'true' becomes 1, 'false' becomes 0" },
+  { question: "In numeric conversion of a string, what happens to leading/trailing whitespace?", options: ["The conversion fails with NaN", "The whitespace is counted as characters", "Whitespace is removed first, then the remaining string is read as a number", "The result is always 0"], answer: "Whitespace is removed first, then the remaining string is read as a number" },
+  { question: "If the remaining string after whitespace removal is empty during numeric conversion, the result is:", options: ["NaN", "undefined", "null", "0"], answer: "0" },
+  { question: "Boolean conversion is performed by which function?", options: ["bool(value)", "toBool(value)", "Boolean(value)", "asBoolean(value)"], answer: "Boolean(value)" },
+  { question: "Which values become 'false' during Boolean conversion?", options: ["All string values", "0, empty string, null, undefined, NaN", "null and undefined only", "0 and null only"], answer: "0, empty string, null, undefined, NaN" },
+  { question: "In Boolean conversion, a non-empty string like 'hello' becomes:", options: ["false", "null", "undefined", "true"], answer: "true" },
+  { question: "In JavaScript, how many types of operators are there?", options: ["Three", "Four", "Five", "Six"], answer: "Five" },
+  { question: "What are the five types of operators supported by JavaScript?", options: ["Math, Text, Logical, Comparison, Ternary", "Arithmetic, Comparison, Logical, Assignment, Conditional (ternary)", "Add, Subtract, Multiply, Divide, Modulus", "Bitwise, Arithmetic, Boolean, String, Object"], answer: "Arithmetic, Comparison, Logical, Assignment, Conditional (ternary)" },
+  { question: "In arithmetic operations, what does the + operator do when applied to 'a' and 10?", options: ["Throws an error", "Returns 10", "Returns NaN", "Returns 'a10' (string concatenation)"], answer: "Returns 'a10' (string concatenation)" },
+  { question: "What does the % (Modulus) operator do?", options: ["Multiplies two numbers", "Divides two numbers and returns the result", "Outputs the remainder of an integer division", "Returns a percentage value"], answer: "Outputs the remainder of an integer division" },
+  { question: "What does the ++ (Increment) operator do?", options: ["Decreases an integer value by one", "Increases an integer value by one", "Multiplies the value by two", "Converts the value to a string"], answer: "Increases an integer value by one" },
+  { question: "What does the -- (Decrement) operator do?", options: ["Increases an integer value by one", "Resets the value to zero", "Divides the value by two", "Decreases an integer value by one"], answer: "Decreases an integer value by one" },
+  { question: "The == (Equal) comparison operator checks:", options: ["If one value is greater than the other", "If the value of two operands are equal; if so, the condition is true", "If two operands are strictly equal including type", "If two operands are not equal"], answer: "If the value of two operands are equal; if so, the condition is true" },
+  { question: "The != (Not Equal) comparison operator returns true when:", options: ["The values are equal", "The values are not equal", "The first operand is greater", "Both operands are null"], answer: "The values are not equal" },
+  { question: "The && (Logical AND) operator returns true when:", options: ["At least one operand is non-zero", "Both operands are non-zero", "Neither operand is zero", "One operand is true and the other is false"], answer: "Both operands are non-zero" },
+  { question: "The || (Logical OR) operator returns true when:", options: ["Both operands are zero", "Neither operand is true", "Any of the two operands is non-zero", "Both operands are NaN"], answer: "Any of the two operands is non-zero" },
+  { question: "The ! (Logical NOT) operator:", options: ["Adds the operands together", "Reverses the logical state of its operand", "Returns the absolute value", "Multiplies by -1"], answer: "Reverses the logical state of its operand" },
+  { question: "The += (Add and Assignment) operator is equivalent to:", options: ["C = A - C", "C = A + C", "C = C + A", "C = A * C"], answer: "C = C + A" },
+  { question: "The conditional (ternary) operator ? : checks:", options: ["If a condition is true, then returns value X; otherwise returns value Y", "If a value is null and replaces it", "If a variable exists in the scope", "If two values are strictly equal"], answer: "If a condition is true, then returns value X; otherwise returns value Y" },
+  { question: "The 'typeof' operator returns:", options: ["The size of a variable", "The value of a variable", "A string with the type name of the operand", "The memory address of the operand"], answer: "A string with the type name of the operand" },
+  { question: "What does 'typeof null' return in JavaScript?", options: ["\"null\"", "\"undefined\"", "\"object\"", "\"boolean\""], answer: "\"object\"" },
+  { question: "What does 'typeof alert' return in JavaScript?", options: ["\"object\"", "\"undefined\"", "\"string\"", "\"function\""], answer: "\"function\"" },
+  { question: "What does 'typeof true' return?", options: ["\"number\"", "\"boolean\"", "\"string\"", "\"object\""], answer: "\"boolean\"" },
+  { question: "What does the if(...) statement do?", options: ["It always executes the code block", "It evaluates a condition in parentheses and executes code if the result is true", "It loops through an array", "It declares a new variable"], answer: "It evaluates a condition in parentheses and executes code if the result is true" },
+  { question: "If you want to execute more than one statement in an if block, you must:", options: ["Use multiple if statements", "Use semicolons between statements", "Wrap the code block inside curly braces", "Use the switch statement instead"], answer: "Wrap the code block inside curly braces" },
+  { question: "The 'else if' clause is used to:", options: ["Test a single condition", "Handle errors", "Test several variants of a condition", "Break out of a loop"], answer: "Test several variants of a condition" },
+  { question: "In the ternary operator 'condition ? value1 : value2', what is returned if the condition is truthy?", options: ["value2", "null", "undefined", "value1"], answer: "value1" }
+], 
+        3: [
+  { question: "What is the primary purpose of loops in JavaScript?", options: ["To declare variables", "To repeat the same code multiple times", "To define functions", "To handle errors"], answer: "To repeat the same code multiple times" },
+  { question: "What is the syntax of the 'while' loop?", options: ["while { condition } (code)", "while (condition) { code }", "loop (condition) { code }", "repeat (condition) { code }"], answer: "while (condition) { code }" },
+  { question: "In a while loop, when is the code in the loop body executed?", options: ["Only once", "While the condition is falsy", "While the condition is truthy", "Before the condition is checked"], answer: "While the condition is truthy" },
+  { question: "A shorter way to write 'while (i != 0)' is:", options: ["while (i == 0)", "while (!i)", "while (i)", "while (i > 0)"], answer: "while (i)" },
+  { question: "What is the key difference between the do...while loop and the while loop?", options: ["do...while is faster", "do...while checks the condition before executing the body", "do...while executes the body first, then checks the condition", "do...while cannot use break"], answer: "do...while executes the body first, then checks the condition" },
+  { question: "The do...while loop syntax is:", options: ["do { code } while (condition);", "while (condition) do { code }", "loop { code } while (condition);", "do (condition) { code }"], answer: "do { code } while (condition);" },
+  { question: "When should the do...while loop be used?", options: ["When you need to break out of a loop early", "When you want the body of the loop to execute at least once regardless of the condition", "When iterating over arrays only", "When looping infinitely"], answer: "When you want the body of the loop to execute at least once regardless of the condition" },
+  { question: "The for loop is described as:", options: ["The simplest loop in JavaScript", "The most rarely used loop", "More complex but the most commonly used loop", "Only used for iterating arrays"], answer: "More complex but the most commonly used loop" },
+  { question: "What is the syntax of the for loop?", options: ["for (begin, condition, step) { body }", "for [begin; condition; step] { body }", "for (begin; condition; step) { body }", "for {begin; condition; step} (body)"], answer: "for (begin; condition; step) { body }" },
+  { question: "In a for loop, when does the 'begin' part execute?", options: ["After each iteration", "Once upon entering the loop", "Before each condition check", "Only when the condition is false"], answer: "Once upon entering the loop" },
+  { question: "In a for loop, when is the 'condition' checked?", options: ["Only at the start", "After the body executes", "Before every loop iteration; if false, the loop stops", "After the step executes"], answer: "Before every loop iteration; if false, the loop stops" },
+  { question: "In a for loop, when does the 'step' execute?", options: ["Before the condition is checked", "Before the loop body", "After the body on each iteration", "Only when the condition is true"], answer: "After the body on each iteration" },
+  { question: "What does the 'break' directive do in a loop?", options: ["Skips the current iteration and continues to the next", "Forces the loop to restart", "Forces the exit of the loop at any time", "Pauses the loop temporarily"], answer: "Forces the exit of the loop at any time" },
+  { question: "What does the 'continue' directive do in a loop?", options: ["Exits the entire loop immediately", "Stops the current iteration and forces the loop to start a new one", "Pauses the loop for one cycle", "Restarts the loop from the beginning"], answer: "Stops the current iteration and forces the loop to start a new one" },
+  { question: "The continue directive is described as a 'lighter version' of:", options: ["return", "throw", "break", "exit"], answer: "break" },
+  { question: "What does a switch statement do?", options: ["Declares multiple variables at once", "Replaces multiple if checks with a more descriptive way to compare a value with multiple variants", "Loops through an array", "Handles exceptions"], answer: "Replaces multiple if checks with a more descriptive way to compare a value with multiple variants" },
+  { question: "A switch statement has one or more case blocks and an optional:", options: ["else", "finally", "default", "break"], answer: "default" },
+  { question: "In a switch statement, the value of x is checked for strict equality to each case value using:", options: ["== (loose equality)", "!= (not equal)", "=== (strict equality)", ">= (greater than or equal)"], answer: "=== (strict equality)" },
+  { question: "In a switch statement, if the equality for a case is found, execution starts from that case until:", options: ["The start of the next case", "The end of the switch block", "The nearest break or end of switch", "The default case"], answer: "The nearest break or end of switch" },
+  { question: "If no case matches in a switch statement, what executes?", options: ["The first case", "Nothing", "The last case", "The default code (if it exists)"], answer: "The default code (if it exists)" },
+  { question: "What happens in a switch statement if there is no 'break' between cases?", options: ["The switch exits immediately", "An error is thrown", "Execution continues with the next case without any checks", "The default case executes"], answer: "Execution continues with the next case without any checks" },
+  { question: "The ability to 'group' cases in a switch statement (like case 3 and case 5 sharing the same code) is a result of:", options: ["Using the 'group' keyword", "The switch/case mechanism working without break statements", "Using nested switch statements", "Using the default case"], answer: "The switch/case mechanism working without break statements" },
+  { question: "In a switch statement, 'type matters'. What does this mean?", options: ["Only string types can be used", "The values must be of the same type to match (strict equality)", "Only numbers can be used in case statements", "Floating point values are not allowed"], answer: "The values must be of the same type to match (strict equality)" },
+  { question: "What are functions described as in programming?", options: ["The main data storage units", "The main 'building blocks' of the program", "Loop constructs", "Type conversion tools"], answer: "The main 'building blocks' of the program" },
+  { question: "What is the main benefit of functions regarding code duplication?", options: ["They make code run faster", "They allow the code to be called many times without repetition", "They reduce memory usage", "They convert data types automatically"], answer: "They allow the code to be called many times without repetition" },
+  { question: "Which keyword is used in a function declaration?", options: ["def", "func", "fn", "function"], answer: "function" },
+  { question: "What is the correct structure of a function declaration?", options: ["function name { parameters } (body)", "function (parameter1, parameter2) name { body }", "function name(parameter1, parameter2, ...) { body }", "def name(parameter1) { body }"], answer: "function name(parameter1, parameter2, ...) { body }" },
+  { question: "What is 'the function body' in a function declaration?", options: ["The function's name", "The list of parameters", "The code between the curly braces", "The return value"], answer: "The code between the curly braces" },
+  { question: "A variable declared inside a function is:", options: ["Visible everywhere in the program", "Only visible inside that function (local variable)", "Accessible from all other functions", "Always a global variable"], answer: "Only visible inside that function (local variable)" },
+  { question: "A function can access an outer (global) variable:", options: ["Never", "Only if it's passed as a parameter", "Yes, a function can access and modify outer variables", "Only if declared with 'var'"], answer: "Yes, a function can access and modify outer variables" },
+  { question: "Variables declared outside any function are called:", options: ["Local variables", "Private variables", "Global variables", "Constants"], answer: "Global variables" },
+  { question: "Global variables are visible from:", options: ["Only the function they are nearest to", "Only the main script", "Any function (unless shadowed by locals)", "Only functions that explicitly import them"], answer: "Any function (unless shadowed by locals)" },
+  { question: "What is considered good practice regarding global variables?", options: ["Use as many globals as possible", "It's good practice to minimize the use of global variables", "Store all data in global variables", "Always use globals instead of parameters"], answer: "It's good practice to minimize the use of global variables" },
+  { question: "What are 'parameters' in a function?", options: ["The function's name parts", "Arbitrary data passed to the function", "The function's return values", "The curly braces containing the function body"], answer: "Arbitrary data passed to the function" },
+  { question: "When a function is called with given values for its parameters, those values are:", options: ["Stored globally", "Ignored if they match variable names", "Copied to local variables inside the function", "Passed by reference always"], answer: "Copied to local variables inside the function" },
+  { question: "A function can return a value using which directive?", options: ["yield", "output", "send", "return"], answer: "return" },
+  { question: "When the execution reaches a 'return' directive, what happens?", options: ["The function continues running", "The function pauses", "The function stops, and the value is returned to the calling code", "The function restarts"], answer: "The function stops, and the value is returned to the calling code" },
+  { question: "Can there be many occurrences of 'return' in a single function?", options: ["No, only one return per function", "Yes, there may be many return statements in a function", "Only in switch statements inside functions", "Only with if/else blocks"], answer: "Yes, there may be many return statements in a function" },
+  { question: "What happens when 'return' is used without a value?", options: ["The function returns 0", "The function returns null", "The function causes an error", "The function exits immediately"], answer: "The function exits immediately" },
+  { question: "Functions are described as 'actions'. Therefore, their names are usually:", options: ["Nouns", "Adjectives", "Verbs", "Numbers"], answer: "Verbs" },
+  { question: "According to the lecture, a function starting with 'get...' typically:", options: ["Creates something", "Checks something and returns a boolean", "Returns a value", "Calculates something"], answer: "Returns a value" },
+  { question: "According to the lecture, a function starting with 'calc...' typically:", options: ["Creates something", "Returns a value", "Checks something and returns a boolean", "Calculates something"], answer: "Calculates something" },
+  { question: "According to the lecture, a function starting with 'check...' typically:", options: ["Returns a value", "Creates something", "Checks something and returns a boolean", "Calculates something"], answer: "Checks something and returns a boolean" },
+  { question: "Function expressions allow:", options: ["Only named functions", "Creating a function in the middle of any expression", "Functions without a body", "Functions with unlimited parameters"], answer: "Creating a function in the middle of any expression" },
+  { question: "In a function expression like 'let sayHi = function() { alert('Hello'); };', what is being assigned to 'sayHi'?", options: ["The result of calling the function", "A new function created and stored in the variable", "A reference to a built-in function", "A string value"], answer: "A new function created and stored in the variable" }
+],
+        4: [
+    { question: "Objects in JavaScript are used to store:", options: ["Single values only", "Keyed collections of various data and more complex entities", "Only numeric data", "Only string data"], answer: "Keyed collections of various data and more complex entities" },
+    { question: "An object property is a:", options: ["function: value pair", "index: value pair", "key: value pair", "name: type pair"], answer: "key: value pair" },
+    { question: "In an object property, what is the 'key'?", options: ["A number", "A boolean", "A string (also called 'property name')", "An array"], answer: "A string (also called 'property name')" },
+    { question: "How can an empty object be created in JavaScript?", options: ["Using new Object() or {} syntax", "Only using the new Object() syntax", "Only using the {} syntax", "Using Object.create() only"], answer: "Using new Object() or {} syntax" },
+    { question: "What is the declaration 'let user = {}' called?", options: ["Object constructor syntax", "Object factory syntax", "Object literal syntax", "Object expression syntax"], answer: "Object literal syntax" },
+    { question: "Which notation is used to access object property values?", options: ["Arrow notation", "Dot notation", "Bracket notation only", "Slash notation"], answer: "Dot notation" },
+    { question: "How do you delete a property from an object?", options: ["Using the remove operator", "Using the delete operator", "Setting the property to null", "Using object.clear()"], answer: "Using the delete operator" },
+    { question: "If a property name contains multiple words (e.g., 'likes birds'), how must it be declared?", options: ["Using camelCase (likesBirds)", "It cannot contain spaces", "It must be quoted in the object literal", "Using an underscore"], answer: "It must be quoted in the object literal" },
+    { question: "For multiword property names, which notation must be used to access them (the dot notation won't work)?", options: ["Arrow notation", "Colon notation", "Square bracket notation", "Asterisk notation"], answer: "Square bracket notation" },
+    { question: "Square bracket notation allows:", options: ["Only literal string property names", "Obtaining the property name as the result of any expression, like from a variable", "Only numeric property names", "Only accessing nested objects"], answer: "Obtaining the property name as the result of any expression, like from a variable" },
+    { question: "What are 'computed properties' in an object literal?", options: ["Properties whose values are computed at runtime", "Properties that use functions as values", "Properties where the property name is taken from a variable using square brackets", "Properties that are automatically sorted"], answer: "Properties where the property name is taken from a variable using square brackets" },
+    { question: "The 'in' operator is used to:", options: ["Iterate over array elements", "Check whether a property exists in an object", "Add a new property to an object", "Delete a property from an object"], answer: "Check whether a property exists in an object" },
+    { question: "What is the syntax for using the 'in' operator to check if a property exists?", options: ["object.has(property)", "property in object", "object.contains(property)", "in(property, object)"], answer: "property in object" },
+    { question: "Accessing a non-existing property in JavaScript returns:", options: ["null", "An error", "0", "undefined"], answer: "undefined" },
+    { question: "The 'for...in' loop is used to:", options: ["Walk over all keys of an object", "Iterate over array elements by index", "Loop through numbers in a range", "Iterate over characters in a string"], answer: "Walk over all keys of an object" },
+    { question: "What is the syntax of the 'for...in' loop?", options: ["for (key in object) { }", "for (key of object) { }", "for (let key : object) { }", "foreach (key in object) { }"], answer: "for (key in object) { }" },
+    { question: "One of the fundamental differences of objects vs primitives is that objects are stored and copied:", options: ["By value", "By type", "By reference", "By name"], answer: "By reference" },
+    { question: "Primitive values (strings, numbers, booleans) are copied:", options: ["By reference", "By key", "As a whole value", "Only when explicitly cloned"], answer: "As a whole value" },
+    { question: "When a variable is assigned to an object, what does the variable store?", options: ["The object itself directly", "A copy of all the object's properties", "The address in memory — a reference to the object", "The object's type"], answer: "The address in memory — a reference to the object" },
+    { question: "When an object variable is copied (e.g., let admin = user), what happens?", options: ["A new independent object is created", "Both variables now reference the same object", "The object is duplicated in memory", "Only the first-level properties are copied"], answer: "Both variables now reference the same object" },
+    { question: "If two variables reference the same object and you modify the object through one variable, what happens when you access the object through the other variable?", options: ["The other variable retains the old values", "An error is thrown", "The changes are seen from both variables", "The second variable becomes null"], answer: "The changes are seen from both variables" },
+    { question: "What is an Array in JavaScript?", options: ["A type of object used to store ordered collections", "A type of function used to create objects", "A primitive data type for storing multiple values", "A type of loop"], answer: "A type of object used to store ordered collections" },
+    { question: "Why is an object not suitable for storing ordered collections?", options: ["Objects are too large in memory", "Objects provide no methods to manage order, can't insert between existing items, and are not meant for such use", "Objects can only store strings", "Objects cannot have more than 10 properties"], answer: "Objects provide no methods to manage order, can't insert between existing items, and are not meant for such use" },
+    { question: "What are the two syntaxes for creating an empty array?", options: ["new Array() and []", "Array() and {}", "new Array() and new List()", "[] and {}"], answer: "new Array() and []" },
+    { question: "Array elements are numbered starting with:", options: ["1", "0", "-1", "Depends on the array type"], answer: "0" },
+    { question: "How do you get an array element by its index?", options: ["array.get(index)", "array[index]", "array.element(index)", "array->index"], answer: "array[index]" },
+    { question: "The total count of elements in an array is accessed by:", options: ["array.size", "array.count", "array.length", "array.total"], answer: "array.length" },
+    { question: "In JavaScript, can an array store elements of different types?", options: ["No, all elements must be of the same type", "Yes, arrays can store elements of any type", "Only if declared with mixed type syntax", "Only numbers and strings can be mixed"], answer: "Yes, arrays can store elements of any type" },
+    { question: "What is a common use of arrays in the context of queue operations?", options: ["Only storing strings", "An ordered collection supporting push (append to end) and shift (get from beginning)", "Random access of elements by key", "Sorting items automatically"], answer: "An ordered collection supporting push (append to end) and shift (get from beginning)" },
+    { question: "What is the LIFO principle associated with in arrays?", options: ["Queues", "Linked lists", "Stacks", "Trees"], answer: "Stacks" },
+    { question: "What does LIFO stand for?", options: ["Last-In-First-Over", "Last-In-First-Out", "Latest Indexed First Output", "Load-In-File-Out"], answer: "Last-In-First-Out" },
+    { question: "What does FIFO stand for?", options: ["First-In-File-Output", "Fast Index Forward Operation", "First-In-First-Out", "Forward-Indexed-Forward-Output"], answer: "First-In-First-Out" },
+    { question: "In computer science, what is the data structure that allows adding/removing elements both to/from the beginning or the end called?", options: ["Stack", "Queue", "Deque", "Heap"], answer: "Deque" },
+    { question: "What does the 'pop' method do on an array?", options: ["Adds an element to the end", "Adds an element to the beginning", "Extracts the last element of the array and returns it (removing it)", "Extracts the first element"], answer: "Extracts the last element of the array and returns it (removing it)" },
+    { question: "What does the 'push' method do on an array?", options: ["Removes the last element", "Extracts the first element", "Appends an element to the end of the array", "Adds an element to the beginning"], answer: "Appends an element to the end of the array" },
+    { question: "What does the 'shift' method do on an array?", options: ["Adds an element to the end", "Extracts the first element of the array and returns it", "Sorts the array", "Removes the last element"], answer: "Extracts the first element of the array and returns it" },
+    { question: "What does the 'unshift' method do on an array?", options: ["Removes the first element", "Removes the last element", "Adds an element to the beginning of the array", "Reverses the array"], answer: "Adds an element to the beginning of the array" },
+    { question: "Which loop form is used specifically for iterating over array elements (giving access to values, not indexes)?", options: ["for...in", "while", "do...while", "for...of"], answer: "for...of" },
+    { question: "Can arrays have items that are also arrays?", options: ["No, arrays must only contain primitive values", "Yes, arrays can contain arrays (multidimensional arrays)", "Only one level of nesting is allowed", "Only in ES6 and above"], answer: "Yes, arrays can contain arrays (multidimensional arrays)" },
+    { question: "If 'new Array' is called with a single numeric argument like new Array(2), what happens?", options: ["Creates an array with the value 2 in it", "Creates an empty array", "Creates an array without items but with the given length", "Throws an error"], answer: "Creates an array without items but with the given length" },
+    { question: "What is the Date object in JavaScript?", options: ["A primitive type for storing calendar data", "A built-in object that stores the date and time and provides methods for date/time management", "A string format for dates", "A CSS property for date styling"], answer: "A built-in object that stores the date and time and provides methods for date/time management" },
+    { question: "What does 'new Date()' (with no arguments) create?", options: ["A Date object set to January 1, 1970", "A Date object for the current date and time", "An empty date object", "A Date object set to midnight UTC"], answer: "A Date object for the current date and time" },
+    { question: "What is a 'timestamp' in the context of JavaScript Dates?", options: ["A formatted date string", "An integer number representing milliseconds passed since January 1, 1970 UTC+0", "The current system time in seconds", "A date in ISO format"], answer: "An integer number representing milliseconds passed since January 1, 1970 UTC+0" },
+    { question: "Do dates before January 1, 1970 have positive or negative timestamps?", options: ["Positive", "Zero", "Negative", "They are not supported"], answer: "Negative" },
+    { question: "When creating a date with 'new Date(year, month, ...)', what does month 0 represent?", options: ["December", "February", "January", "March"], answer: "January" },
+    { question: "In 'new Date(year, month, date, ...)', what is assumed for date if absent?", options: ["0", "31", "1", "The last day of the month"], answer: "1" },
+    { question: "The month count in new Date() ranges from:", options: ["1 (Jan) to 12 (Dec)", "0 (Jan) to 12 (Dec)", "0 (Jan) to 11 (Dec)", "1 (Jan) to 11 (Dec)"], answer: "0 (Jan) to 11 (Dec)" },
+    { question: "Which method returns the full year (4 digits) from a Date object?", options: ["getYear()", "getFullYear()", "getYearFull()", "getDate()"], answer: "getFullYear()" },
+    { question: "Which method returns the month from a Date object (0 to 11)?", options: ["getDate()", "getDay()", "getYear()", "getMonth()"], answer: "getMonth()" },
+    { question: "Which method returns the day of the month (1 to 31) from a Date object?", options: ["getDay()", "getFullDate()", "getDate()", "getMonth()"], answer: "getDate()" },
+    { question: "Which method returns the day of the week (0 = Sunday, 6 = Saturday)?", options: ["getDate()", "getWeekDay()", "getMonth()", "getDay()"], answer: "getDay()" },
+    { question: "All date-reading methods return components relative to:", options: ["UTC+0 time zone", "The GMT time zone", "The local time zone", "The server's time zone"], answer: "The local time zone" },
+    { question: "Which method returns the timestamp (milliseconds since Jan 1, 1970 UTC+0) for a Date object?", options: ["getTimestamp()", "getUTCTime()", "getMilliseconds()", "getTime()"], answer: "getTime()" },
+    { question: "Which method returns the difference between UTC and the local time zone in minutes?", options: ["getUTCOffset()", "getTimezoneOffset()", "getTimeDifference()", "getLocalOffset()"], answer: "getTimezoneOffset()" },
+    { question: "UTC-counterpart methods are created by inserting 'UTC' right after 'get'. For example, the UTC version of getFullYear() is:", options: ["getFullYearUTC()", "UTCgetFullYear()", "getUTCFullYear()", "getFullYear(UTC)"], answer: "getUTCFullYear()" },
+    { question: "Which method sets hours for a Date object?", options: ["setHour()", "putHours()", "setHours()", "assignHours()"], answer: "setHours()" },
+    { question: "In the setHours() method, can you set multiple components at once?", options: ["No, only the hour can be set", "Yes, setHours accepts hour, min, sec, ms", "Only hour and minutes", "Only hour and seconds"], answer: "Yes, setHours accepts hour, min, sec, ms" },
+    { question: "The setTime() method sets the whole date by:", options: ["A formatted string", "Milliseconds since 01.01.1970 UTC", "Individual components (year, month, day)", "A timestamp in seconds"], answer: "Milliseconds since 01.01.1970 UTC" },
+    { question: "Does the setTime() method have a UTC variant?", options: ["Yes, setUTCTime()", "No, setTime() is the only exception without a UTC variant", "Yes, setTime(UTC)", "No, none of the set methods have UTC variants"], answer: "No, setTime() is the only exception without a UTC variant" },
+    { question: "When using setHours() to change only the hour, what happens to the other components (minutes, seconds, ms)?", options: ["They reset to 0", "They reset to their maximum values", "They are not modified", "They become undefined"], answer: "They are not modified" }
+], 
+        5: [
+    { question: "What is an exception in JavaScript?", options: ["A special type of variable", "The anomalous code (unexpected behavior) that breaks the normal flow of the code", "A valid alternative execution path", "A type of loop control statement"], answer: "The anomalous code (unexpected behavior) that breaks the normal flow of the code" },
+    { question: "An exception signifies the presence of:", options: ["A compile error", "A missing variable", "An abnormal condition which requires special operable techniques", "A network failure"], answer: "An abnormal condition which requires special operable techniques" },
+    { question: "What is exception handling?", options: ["A method of preventing all runtime errors", "A process or method used for handling abnormal statements in the code and executing them", "A way to stop JavaScript execution permanently", "A browser feature for logging errors"], answer: "A process or method used for handling abnormal statements in the code and executing them" },
+    { question: "Exception handling also enables:", options: ["Faster code execution", "Automatic code optimization", "Handling the flow control of the code/program", "Variable type checking"], answer: "Handling the flow control of the code/program" },
+    { question: "In exception handling, a 'throw' statement is used to:", options: ["Catch an exception", "Log an error to the console", "Raise an exception", "Declare an error variable"], answer: "Raise an exception" },
+    { question: "The thrown exception is handled by wrapping the code into:", options: ["A try...catch block", "An if...else block", "A switch statement", "A function call"], answer: "A try...catch block" },
+    { question: "If an error is present in the try block, which block executes?", options: ["The try block continues", "The finally block only", "The catch block", "Neither block executes"], answer: "The catch block" },
+    { question: "If no error occurs in the try block, which block executes?", options: ["Only the catch block", "Only the try block statements get executed (catch is ignored)", "Both try and catch blocks execute", "Neither block executes"], answer: "Only the try block statements get executed (catch is ignored)" },
+    { question: "Which of the following is a Syntax Error?", options: ["A network timeout", "A mistake in the pre-defined syntax of a programming language", "An error during the execution of the program", "A logical mistake in program flow"], answer: "A mistake in the pre-defined syntax of a programming language" },
+    { question: "Which of the following is a Runtime Error?", options: ["A missing semicolon", "A misspelled keyword", "An error that occurs during the execution of the program", "An indentation error"], answer: "An error that occurs during the execution of the program" },
+    { question: "Codes that create runtime errors are known as:", options: ["Compile errors", "Logic bugs", "Exceptions", "Warnings"], answer: "Exceptions" },
+    { question: "Which of the following is a Logical Error?", options: ["Calling a function that doesn't exist", "A missing closing bracket", "A logical mistake in the program that may not produce the desired output and may terminate abnormally", "A network connection failure"], answer: "A logical mistake in the program that may not produce the desired output and may terminate abnormally" },
+    { question: "Exception handlers are used specifically for handling:", options: ["Syntax errors", "Logical errors", "Runtime errors", "Compile-time errors"], answer: "Runtime errors" },
+    { question: "When a runtime error occurs, JavaScript creates and throws an:", options: ["Alert object", "Exception string", "Error object", "Log object"], answer: "Error object" },
+    { question: "An Error object has two properties. What are they?", options: ["type and value", "code and description", "name and message", "id and details"], answer: "name and message" },
+    { question: "What does the 'name' property of an Error object do?", options: ["Returns the error code number", "Sets or returns an error name", "Returns the line number of the error", "Returns the stack trace"], answer: "Sets or returns an error name" },
+    { question: "What does the 'message' property of an Error object do?", options: ["Returns the error name", "Returns the error line number", "Returns an error message in string form", "Returns the error type code"], answer: "Returns an error message in string form" },
+    { question: "What are the three exception handling statements in JavaScript?", options: ["try...catch, try...catch...finally, throw statements", "if...else, switch...case, try...catch", "throw, error, handle statements", "try...except, finally, raise statements"], answer: "try...catch, try...catch...finally, throw statements" },
+    { question: "What error does calling a non-existent function produce in JavaScript?", options: ["SyntaxError", "TypeError", "ReferenceError", "RangeError"], answer: "TypeError" },
+    { question: "When the JavaScript engine encounters an error without try...catch, what happens?", options: ["The error is logged and execution continues", "The engine pauses and waits for user input", "The error is issued and immediately the execution of the entire script is terminated", "Only the current function stops"], answer: "The error is issued and immediately the execution of the entire script is terminated" },
+    { question: "In the try...catch syntax, where should you place code that may cause an error?", options: ["In the catch block", "After the catch block", "In the try block", "In the finally block"], answer: "In the try block" },
+    { question: "In the try...catch syntax, where should you implement the logic to handle the error?", options: ["In the try block", "Before the try block", "In the catch block", "After both blocks"], answer: "In the catch block" },
+    { question: "If an error occurs in the try block, what does the JavaScript engine immediately do?", options: ["Terminates the entire script", "Continues executing the try block", "Executes the code in the catch block", "Skips to the finally block"], answer: "Executes the code in the catch block" },
+    { question: "When an error occurs, the JavaScript engine provides the catch block with:", options: ["A string description of the error", "An error object that contains detailed information about the error", "The line number of the error only", "A boolean value indicating error type"], answer: "An error object that contains detailed information about the error" },
+    { question: "It is good practice to place in the try block:", options: ["All code in the program", "Only the code that may cause an exception", "Only return statements", "Only variable declarations"], answer: "Only the code that may cause an exception" },
+    { question: "If no error occurs in the try block, what does the JavaScript engine do with the catch block?", options: ["Executes it anyway", "Executes it once", "Ignores the catch block", "Executes it only if the try block has a return statement"], answer: "Ignores the catch block" },
+    { question: "The try...catch...finally statement is used when you want:", options: ["To catch multiple error types separately", "To execute a block whether exceptions occur or not", "To prevent all errors from occurring", "To handle only syntax errors"], answer: "To execute a block whether exceptions occur or not" },
+    { question: "The 'finally' block always executes:", options: ["Only when an error occurs", "Only when no error occurs", "After the try and catch blocks complete, whether exceptions occur or not", "Before the try block"], answer: "After the try and catch blocks complete, whether exceptions occur or not" },
+    { question: "In the try...catch...finally syntax, what is the correct order of blocks?", options: ["finally, try, catch", "catch, try, finally", "try, finally, catch", "try, catch, finally"], answer: "try, catch, finally" },
+    { question: "What does the JavaScript 'throw' statement do?", options: ["Stops the program permanently", "Creates a new variable", "Allows you to throw an exception", "Handles a caught exception"], answer: "Allows you to throw an exception" },
+    { question: "Throw statements are used for:", options: ["Catching built-in errors only", "Throwing user-defined errors", "Automatically fixing runtime errors", "Logging errors to the console"], answer: "Throwing user-defined errors" },
+    { question: "What is the syntax of the throw statement?", options: ["raise expression;", "error expression;", "throw expression;", "exception expression;"], answer: "throw expression;" },
+    { question: "The 'expression' in the throw statement specifies:", options: ["The type of error", "The value of the exception", "The line to jump to", "The catch block to execute"], answer: "The value of the exception" },
+    { question: "The thrown exception (the value thrown with 'throw') can be:", options: ["Only a string", "Only a number", "Only an object", "A string, number, object, or boolean value"], answer: "A string, number, object, or boolean value" },
+    { question: "When a throw statement is executed, what happens to the statements present after it?", options: ["They execute normally", "They execute only if no catch block exists", "They will not execute", "They execute in the finally block"], answer: "They will not execute" },
+    { question: "When a throw statement is executed, control directly passes to:", options: ["The next line", "The finally block", "The catch block", "The top of the script"], answer: "The catch block" },
+    { question: "If no catch block exists when a throw statement executes, what does the JavaScript engine do?", options: ["Continues execution normally", "Ignores the throw", "Terminates the script", "Executes the finally block and stops"], answer: "Terminates the script" },
+    { question: "Can an Error object be used as the base for user-defined exceptions?", options: ["No, only primitive values can be thrown", "Yes, an Error object can be used as a base for user-defined exceptions", "Only in strict mode", "Only in Node.js environments"], answer: "Yes, an Error object can be used as a base for user-defined exceptions" },
+    { question: "In Example 01 of try...catch...finally, the result variable is initialized to:", options: ["undefined", "null", "NaN", "0"], answer: "0" },
+    { question: "In Example 01, because the add() function does not exist, the JavaScript engine:", options: ["Returns 0 and continues", "Raises an exception and executes the catch block", "Skips to the finally block directly", "Ignores the error and continues"], answer: "Raises an exception and executes the catch block" },
+    { question: "In Example 01, after the error is caught and handled, the finally block outputs:", options: ["The error message", "The sum of the arguments", "The value of the result variable (which is 0)", "Nothing"], answer: "The value of the result variable (which is 0)" },
+    { question: "In Example 02, when the add() function is correctly defined and called in the try block, what happens to the catch block?", options: ["It executes with a success message", "It is ignored since no error occurs", "It executes after the try block", "It throws another error"], answer: "It is ignored since no error occurs" },
+    { question: "In Example 02, the finally block outputs:", options: ["An error message", "Undefined", "The result of add(10, 20) which is 30", "Nothing"], answer: "The result of add(10, 20) which is 30" },
+    { question: "The try...catch statement allows you to catch exceptions and handle them:", options: ["Abruptly", "By terminating the program", "Gracefully", "By logging and ignoring them"], answer: "Gracefully" },
+    { question: "Which of the following correctly describes how to use throw with try...catch?", options: ["throw is placed outside the try block", "The throw statement is placed inside the try block and the catch block handles the thrown exception", "throw replaces the try block", "throw is only used in the finally block"], answer: "The throw statement is placed inside the try block and the catch block handles the thrown exception" }
+]
+    };
+
+    // ==========================================
+    // --- Randomize Options on Load ---
+    // ==========================================
+    function shuffleQuizOptions(data) {
+        for (const key in data) {
+            data[key].forEach(questionItem => {
+                const options = questionItem.options;
+                for (let i = options.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [options[i], options[j]] = [options[j], options[i]];
+                }
+            });
+        }
+    }
+    
+    // Execute shuffle immediately so all questions are randomized
+    shuffleQuizOptions(quizData);
+
+
+    // --- State Variables ---
+    let studentName = "";
+    let currentChapterNum = 0;
+    let currentQuestionIndex = 0;
+    let correctAnswersCount = 0;
+    let isAiEnabled = true;
+
+    // --- Core Logic ---
+    function switchSection(sectionId) {
+        document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+        document.getElementById(sectionId).classList.remove('hidden');
+    }
+
+    function toggleAI() {
+        isAiEnabled = document.getElementById('ai-toggle').checked;
+    }
+
+    function startApp() {
+        const nameInput = document.getElementById('student-name').value.trim();
+        if (!nameInput) return alert("Please enter your name to proceed.");
+        
+        studentName = nameInput;
+        document.getElementById('display-name').innerText = studentName;
+        renderChapters();
+        switchSection('chapters-section');
+    }
+
+    function renderChapters() {
+        const list = document.getElementById('chapter-list');
+        list.innerHTML = ''; 
+        
+        for (let i = 1; i <= 5; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'chapter-btn';
+            const cName = chapterNames[i] || `Topic ${i}`;
+            
+            if (quizData[i] && quizData[i].length > 0) {
+                btn.innerHTML = `<strong style="color: var(--primary);">${cName}</strong><br> ${quizData[i].length} Questions`;
+                btn.onclick = () => startQuiz(i);
+            } else {
+                btn.innerHTML = `Module ${i}: ${cName} <span style="font-size: 0.8em; color: var(--text-muted); float: right;">Pending Upload</span>`;
+                btn.disabled = true;
+                btn.style.opacity = "0.5";
+            }
+            list.appendChild(btn);
+        }
+    }
+
+    function startQuiz(chapterNum) {
+        currentChapterNum = chapterNum;
+        currentQuestionIndex = 0;
+        correctAnswersCount = 0;
+        
+        const cName = chapterNames[chapterNum] || "";
+        document.getElementById('quiz-title').innerText = `Module ${chapterNum}`;
+        document.getElementById('total-q-num').innerText = quizData[chapterNum].length;
+        
+        loadQuestion();
+        switchSection('quiz-section');
+    }
+
+    function loadQuestion() {
+        document.getElementById('ai-response').classList.add('hidden');
+        
+        // Respect AI Toggle State for Hint Button
+        if (isAiEnabled) {
+            document.getElementById('ai-hint-btn').classList.remove('hidden');
+        } else {
+            document.getElementById('ai-hint-btn').classList.add('hidden');
+        }
+        
+        document.getElementById('next-btn').classList.add('hidden');
+        
+        document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+        
+        const progress = (currentQuestionIndex / quizData[currentChapterNum].length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+        
+        const currentQ = quizData[currentChapterNum][currentQuestionIndex];
+        document.getElementById('question-text').innerText = currentQ.question;
+        
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        
+        currentQ.options.forEach(option => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = option;
+            btn.onclick = (e) => handleAnswer(option, currentQ.answer, e.target);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(selectedOption, correctOption, clickedBtn) {
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach(btn => btn.classList.add('disabled-btn'));
+
+        if (selectedOption === correctOption) {
+            correctAnswersCount++;
+            clickedBtn.classList.add('btn-correct');
+            setTimeout(() => { proceedToNext(); }, 1500); 
+        } else {
+            clickedBtn.classList.add('btn-wrong');
+            allButtons.forEach(btn => {
+                if (btn.innerText === correctOption) {
+                    btn.classList.add('btn-correct');
+                }
+            });
+
+            // Respect AI Toggle State for Auto-Triggering Explaination
+            if (isAiEnabled) {
+                getAIExplanation(true);
+                document.getElementById('ai-hint-btn').classList.add('hidden');
+            }
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+    }
+
+    function proceedToNext() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData[currentChapterNum].length) {
+            loadQuestion();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function finishQuiz() {
+        document.getElementById('progress-bar').style.width = '100%';
+        const total = quizData[currentChapterNum].length;
+        const percentage = Math.round((correctAnswersCount / total) * 100);
+        
+        document.getElementById('raw-score').innerText = `${correctAnswersCount} / ${total}`;
+        document.getElementById('final-score').innerText = `${percentage}%`;
+        
+        silentGoogleSheetSubmit(percentage);
+        
+        setTimeout(() => { switchSection('results-section'); }, 500); 
+    }
+
+async function silentGoogleSheetSubmit(percentage) {
+        if(GOOGLE_SHEET_WEBAPP_URL === "YOUR_WEB_APP_URL_HERE") return;
+        try {
+            // Get the chapter name if it exists
+            const cName = chapterNames[currentChapterNum];
+            // Format it as "Chapter 1: HTML Fundamentals" or just "Chapter 1" if no name exists
+            const chapterData = cName ? `Chapter ${currentChapterNum}: ${cName}` : `Chapter ${currentChapterNum}`;
+
+            const formData = new URLSearchParams();
+            formData.append('name', studentName);
+            formData.append('chapter', chapterData); // <-- Updated this line
+            formData.append('score', `${percentage}%`);
+
+            fetch(GOOGLE_SHEET_WEBAPP_URL, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if(response.ok) console.log("Score automatically saved.");
+            }).catch(e => console.error("Network issue during silent save.", e));
+        } catch (error) {
+            console.error("Error triggering submit:", error);
+        }
+    }
+
+    function backToChapters() {
+        switchSection('chapters-section');
+    }
+
+    // --- Live Dual AI Integration (Debug Version) ---
+    async function getAIExplanation(isAutoTrigger = false) {
+        const activeKey = API_KEYS[ACTIVE_AI_PROVIDER];
+        const aiBox = document.getElementById('ai-response');
+        const currentQ = quizData[currentChapterNum][currentQuestionIndex];
+
+        if (!activeKey || activeKey.includes("YOUR_")) {
+            aiBox.classList.remove('hidden');
+            aiBox.innerHTML = `<strong>Configuration Error:</strong> Valid API key not found for ${ACTIVE_AI_PROVIDER.toUpperCase()}.`;
+            return;
+        }
+        
+        aiBox.classList.remove('hidden');
+        aiBox.innerHTML = `<em>${isAutoTrigger ? "Generating explanation..." : "Connecting to " + ACTIVE_AI_PROVIDER.toUpperCase() + "..."}</em>`;
+        
+        const promptText = `You are a Web Programming tutor. A student is answering this multiple choice question: "${currentQ.question}". The correct answer is: "${currentQ.answer}". Provide a brief, one-paragraph explanation (max 1-3 sentences) of why this is the correct answer. Focus on explaining the underlying concept clearly. Do not use markdown formatting.`;
+
+        try {
+            let aiText = "";
+
+            if (ACTIVE_AI_PROVIDER === 'gemini') {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${activeKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptText }] }],
+                        generationConfig: { temperature: 0.3 }
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                const data = await response.json();
+                aiText = data.candidates[0].content.parts[0].text;
+
+            } else if (ACTIVE_AI_PROVIDER === 'groq') {
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${activeKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "llama-3.1-8b-instant", 
+                        messages: [{ "role": "user", "content": promptText }],
+                        temperature: 0.3
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                const data = await response.json();
+                aiText = data.choices[0].message.content;
+            }
+
+            aiBox.innerHTML = `${aiText}`;
+
+        } catch (error) {
+            console.error("Detailed API Error:", error);
+            
+            let diagnosis = "";
+            
+            if (error.message.includes('Failed to fetch')) {
+                diagnosis = "🚨 <strong>CORS / Browser Blocked:</strong> Your browser killed the request because you are running the file directly (file:///). You absolutely <strong>must</strong> use a local server (like the VS Code 'Live Server' extension) or host it online to bypass this security block.";
+            } else if (error.message.includes('HTTP 400')) {
+                diagnosis = "❌ <strong>API Key Invalid:</strong> The API rejected the key. It might be malformed or invalid.";
+            } else if (error.message.includes('HTTP 401') || error.message.includes('HTTP 403')) {
+                diagnosis = "🚫 <strong>Permission Denied:</strong> Your key is valid but lacks permissions, or authentication failed.";
+            } else if (error.message.includes('HTTP 429')) {
+                diagnosis = "⏱️ <strong>Quota Exceeded:</strong> You have hit the rate limit for this free key.";
+            } else {
+                diagnosis = `⚠️ <strong>System Error:</strong> ${error.message}`;
+            }
+
+            aiBox.innerHTML = diagnosis;
+        }
+    }
+    
+    // ==========================================
+    // --- Keyboard Navigation ---
+    // ==========================================
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            
+            // 1. If on the Quiz screen and the "Continue" button is visible
+            const nextBtn = document.getElementById('next-btn');
+            if (nextBtn && !nextBtn.classList.contains('hidden')) {
+                event.preventDefault(); 
+                proceedToNext();
+            }
+
+            // 2. If on the Setup screen and typing in the Name box
+            const setupSection = document.getElementById('setup-section');
+            if (setupSection && !setupSection.classList.contains('hidden')) {
+                if (document.activeElement.id === 'student-name') {
+                    event.preventDefault();
+                    startApp();
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
